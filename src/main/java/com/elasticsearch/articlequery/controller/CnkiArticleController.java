@@ -20,7 +20,7 @@ public class CnkiArticleController {
     private final CnkiArticleRepo cnkiArticleRepo;
 
 
-    @GetMapping(value = "/api/article/cnki/SearchByQueryStr")
+    @GetMapping(value = "/api/article/cnki/search/all")
     public DataVO SearchByQueryStr(@RequestParam(value = "queryStr", required = false) String queryStr,
                                    @RequestParam(value = "gtDate", required = false) String gtDate,
                                    @RequestParam(value = "ltDate", required = false) String ltDate,
@@ -71,7 +71,7 @@ public class CnkiArticleController {
     }
 
 
-    @GetMapping(value = "/api/article/cnki/SearchByParams")
+    @GetMapping(value = "/api/article/cnki/search/params")
     public DataVO SearchByParams(@RequestParam(value = "title", required = false) String title,
                                  @RequestParam(value = "author", required = false) String author,
                                  @RequestParam(value = "teacher", required = false) String teacher,

@@ -21,7 +21,7 @@ public class BookController {
     private final BookRepo bookRepo;
 
 
-    @GetMapping(value = "/api/book/SearchByQueryStr")
+    @GetMapping(value = "/api/book/search/all")
     public DataVO SearchByQueryStr(@RequestParam(value = "queryStr", required = false) String queryStr,
                                    @RequestParam(value="pageNum", required=true, defaultValue="1")int pageNum,
                                    @RequestParam(value="pageSize", required=true, defaultValue="20")int pageSize) {
@@ -70,7 +70,7 @@ public class BookController {
     }
 
 
-    @GetMapping(value = "/api/book/SearchByParams")
+    @GetMapping(value = "/api/book/search/params")
     public DataVO SearchByParams(@RequestParam(value = "title", required = false) String title,
                                  @RequestParam(value = "author", required = false) String author,
                                  @RequestParam(value = "publish", required = false) String publish,

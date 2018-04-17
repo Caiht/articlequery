@@ -21,7 +21,7 @@ public class PeriodicalController {
     private final PeriodicalRepo periodicalRepo;
 
 
-    @GetMapping(value = "/api/periodical/SearchByQueryStr")
+    @GetMapping(value = "/api/periodical/search/all")
     public DataVO SearchByQueryStr(@RequestParam(value = "queryStr", required = false) String queryStr,
                                    @RequestParam(value = "pageNum",  defaultValue = "1") int pageNum,
                                    @RequestParam(value = "pageSize",  defaultValue = "20") int pageSize) {
@@ -71,7 +71,7 @@ public class PeriodicalController {
     }
 
 
-    @GetMapping(value = "/api/periodical/SearchByParams")
+    @GetMapping(value = "/api/periodical/search/params")
     public DataVO SearchByParams(@RequestParam(value = "title", required = false) String title,
                                  @RequestParam(value = "author", required = false) String author,
                                  @RequestParam(value = "publish", required = false) String publish,

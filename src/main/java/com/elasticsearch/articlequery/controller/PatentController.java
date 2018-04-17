@@ -20,7 +20,7 @@ public class PatentController {
 
     private final PatentRepo patentRepo;
 
-    @GetMapping(value = "/api/patent/SearchByQueryStr")
+    @GetMapping(value = "/api/patent/search/all")
     public DataVO SearchByQueryStr(@RequestParam(value = "queryStr", required = false) String queryStr,
                                    @RequestParam(value = "gtDate", required = false) String gtDate,
                                    @RequestParam(value = "ltDate", required = false) String ltDate,
@@ -72,7 +72,7 @@ public class PatentController {
     }
 
 
-    @GetMapping(value = "/api/patent/SearchByParams")
+    @GetMapping(value = "/api/patent/search/params")
     public DataVO SearchByParams(@RequestParam(value = "title", required = false) String title,
                                  @RequestParam(value = "requestNumber", required = false) String requestNumber,
                                  @RequestParam(value = "publicationNumber", required = false) String publicationNumber,
