@@ -144,14 +144,12 @@ public class BookRepoImpl implements BookCustomRepo{
         val aggregations = elasticsearchTemplate.query(searchQuery.build(), SearchResponse::getAggregations);
         Histogram agg1 = aggregations.get("date_agg");
         if (StringUtils.isNotBlank(interval)&&"year".equals(interval))
-            return agg1.getBuckets().stream().map(Histogram.Bucket.class::cast).map(bucket -> {
-                return new CommonVo(DateTime.class.cast(bucket.getKey()).toString("yyyy"),
-                        bucket.getDocCount());
-            }).collect(Collectors.toList());
+            return agg1.getBuckets().stream().map(Histogram.Bucket.class::cast)
+                    .map(bucket->new CommonVo(DateTime.class.cast(bucket.getKey()).toString("yyyy"), bucket.getDocCount()))
+                    .collect(Collectors.toList());
         else
-            return agg1.getBuckets().stream().map(Histogram.Bucket.class::cast).map(bucket -> {
-                return new CommonVo(DateTime.class.cast(bucket.getKey()).toString("yyyy-MM"),
-                        bucket.getDocCount());
-            }).collect(Collectors.toList());
+            return agg1.getBuckets().stream().map(Histogram.Bucket.class::cast)
+                    .map(bucket -> new CommonVo(DateTime.class.cast(bucket.getKey()).toString("yyyy-MM"), bucket.getDocCount()))
+                    .collect(Collectors.toList());
     }
 }

@@ -94,10 +94,9 @@ public class PatentRepoImpl implements PatentCustomRepo {
         searchQuery.withIndices("patent").withTypes("patent").withQuery(boolQueryBuilder);
         val aggregations = elasticsearchTemplate.query(searchQuery.build(), SearchResponse::getAggregations);
         Terms agg1 = aggregations.get("term_agg");
-        return agg1.getBuckets().stream().map(Terms.Bucket.class::cast).map(bucket -> {
-            return new CommonVo(bucket.getKeyAsString(),
-                    bucket.getDocCount());
-        }).collect(Collectors.toList());
+        return agg1.getBuckets().stream().map(Terms.Bucket.class::cast)
+                .map(bucket -> new CommonVo(bucket.getKeyAsString(), bucket.getDocCount()))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -118,15 +117,13 @@ public class PatentRepoImpl implements PatentCustomRepo {
         val aggregations = elasticsearchTemplate.query(searchQuery.build(), SearchResponse::getAggregations);
         Histogram agg1 = aggregations.get("date_agg");
         if (StringUtils.isNotBlank(interval)&&"year".equals(interval))
-            return agg1.getBuckets().stream().map(Histogram.Bucket.class::cast).map(bucket -> {
-                return new CommonVo(DateTime.class.cast(bucket.getKey()).toString("yyyy"),
-                        bucket.getDocCount());
-            }).collect(Collectors.toList());
+            return agg1.getBuckets().stream().map(Histogram.Bucket.class::cast)
+                    .map(bucket->new CommonVo(DateTime.class.cast(bucket.getKey()).toString("yyyy"), bucket.getDocCount()))
+                    .collect(Collectors.toList());
         else
-            return agg1.getBuckets().stream().map(Histogram.Bucket.class::cast).map(bucket -> {
-                return new CommonVo(DateTime.class.cast(bucket.getKey()).toString("yyyy-MM"),
-                        bucket.getDocCount());
-            }).collect(Collectors.toList());
+            return agg1.getBuckets().stream().map(Histogram.Bucket.class::cast)
+                    .map(bucket -> new CommonVo(DateTime.class.cast(bucket.getKey()).toString("yyyy-MM"), bucket.getDocCount()))
+                    .collect(Collectors.toList());
 
     }
 }
