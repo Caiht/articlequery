@@ -13,7 +13,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.regex.Pattern;
 
 @RestController
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -150,19 +153,29 @@ public class PatentController {
     public void save(@RequestParam(value = "id", required = false) Long id,
                      @RequestParam(value = "title", required = false) String title,
                      @RequestParam(value = "requestNumber", required = false) String requestNumber,
+                     @RequestParam(value = "requestDate", required = false) String requestDate,
                      @RequestParam(value = "publicationNumber", required = false) String publicationNumber,
+                     @RequestParam(value = "publicationDate", required = false) String publicationDate,
                      @RequestParam(value = "proposer", required = false) String proposer,
                      @RequestParam(value = "inventor", required = false) String inventor,
                      @RequestParam(value = "introduction", required = false) String introduction,
-                     @RequestParam(value = "type", required = false) String type) {
+                     @RequestParam(value = "type", required = false) String type) throws ParseException {
         Patent patent = new Patent();
         if (id == null)
             patent.setId(patentRepo.count() + 1);
         else
             patent.setId(id);
         patent.setTitle(title);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Pattern pattern =Pattern.compile("([0-9]{3}[1-9]|[0-9]{2}[1-9][0-9]{1}|[0-9]{1}[1-9][0-9]{2}|[1-9][0-9]{3})-(((0[13578]|1[02])-(0[1-9]|[12][0-9]|3[01]))|((0[469]|11)-(0[1-9]|[12][0-9]|30))|(02-(0[1-9]|[1][0-9]|2[0-8])))");
         patent.setRequestNumber(requestNumber);
+        if (requestDate!=null&&pattern.matcher(requestDate).matches()){
+            patent.setRequestDate(sdf.parse(requestDate));
+        }
         patent.setPublicationNumber(publicationNumber);
+        if (publicationDate!=null&&pattern.matcher(publicationDate).matches()){
+            patent.setPublicationDate(sdf.parse(publicationDate));
+        }
         patent.setProposer(proposer);
         patent.setInventor(inventor);
         patent.setType(type);

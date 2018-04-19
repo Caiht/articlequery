@@ -13,7 +13,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.regex.Pattern;
 
 @RestController
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -154,7 +157,8 @@ public class PeriodicalController {
                      @RequestParam(value = "author", required = false) String author,
                      @RequestParam(value = "publish", required = false) String publish,
                      @RequestParam(value = "type", required = false) String type,
-                     @RequestParam(value = "introduction", required = false) String introduction) {
+                     @RequestParam(value = "date", required = false) String date,
+                     @RequestParam(value = "introduction", required = false) String introduction) throws ParseException {
         Periodical periodical = new Periodical();
         if (id == null)
             periodical.setId(periodicalRepo.count() + 1);
@@ -164,8 +168,12 @@ public class PeriodicalController {
         periodical.setAuthor(author);
         periodical.setPublisher(publish);
         periodical.setType(type);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Pattern pattern =Pattern.compile("([0-9]{3}[1-9]|[0-9]{2}[1-9][0-9]{1}|[0-9]{1}[1-9][0-9]{2}|[1-9][0-9]{3})-(((0[13578]|1[02])-(0[1-9]|[12][0-9]|3[01]))|((0[469]|11)-(0[1-9]|[12][0-9]|30))|(02-(0[1-9]|[1][0-9]|2[0-8])))");
         periodical.setIntroduction(introduction);
-
+        if (date!=null&&pattern.matcher(date).matches()){
+            periodical.setDate(sdf.parse(date));
+        }
         periodicalRepo.save(periodical);
     }
 }

@@ -14,7 +14,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @RestController
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -159,9 +164,11 @@ public class BookController {
                      @RequestParam(value = "author", required = false) String author,
                      @RequestParam(value = "publish", required = false) String publish,
                      @RequestParam(value = "score", required = false) Double score,
+                     @RequestParam(value = "person" ,required = false) String person,
                      @RequestParam(value = "tag", required = false) String tag,
                      @RequestParam(value = "introduction", required = false) String introduction,
                      @RequestParam(value = "price", required = false) Double price,
+                     @RequestParam(value = "date" ,required = false) String date,
                      @RequestParam(value = "isbn", required = false) String isbn) {
         Book book = new Book();
         if (id == null)
@@ -175,7 +182,18 @@ public class BookController {
         book.setTag(tag);
         book.setIntroduction(introduction);
         book.setPrice(price);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Pattern pattern =Pattern.compile("([0-9]{3}[1-9]|[0-9]{2}[1-9][0-9]{1}|[0-9]{1}[1-9][0-9]{2}|[1-9][0-9]{3})-(((0[13578]|1[02])-(0[1-9]|[12][0-9]|3[01]))|((0[469]|11)-(0[1-9]|[12][0-9]|30))|(02-(0[1-9]|[1][0-9]|2[0-8])))");
+        if (date!=null&&pattern.matcher(date).matches()){
+            try {
+                Date newDate = sdf.parse(date);
+                book.setDate(newDate);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
         book.setIsbn(isbn);
+        book.setPerson(person);
         bookRepo.save(book);
     }
 
