@@ -1,6 +1,7 @@
 package com.elasticsearch.articlequery.controller;
 
 
+import com.elasticsearch.articlequery.models.Periodical;
 import com.elasticsearch.articlequery.models.vos.CommonVo;
 import com.elasticsearch.articlequery.models.vos.DataVO;
 import com.elasticsearch.articlequery.repo.periodical.PeriodicalRepo;
@@ -23,12 +24,12 @@ public class PeriodicalController {
 
     @GetMapping(value = "/api/periodical/search/all")
     public DataVO SearchByQueryStr(@RequestParam(value = "queryStr", required = false) String queryStr,
-                                   @RequestParam(value = "pageNum",  defaultValue = "1") int pageNum,
-                                   @RequestParam(value = "pageSize",  defaultValue = "20") int pageSize) {
+                                   @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+                                   @RequestParam(value = "pageSize", defaultValue = "20") int pageSize) {
         Pageable pageable = new Pageable() {
             @Override
             public int getPageNumber() {
-                return pageNum-1;
+                return pageNum - 1;
             }
 
             @Override
@@ -77,12 +78,12 @@ public class PeriodicalController {
                                  @RequestParam(value = "publish", required = false) String publish,
                                  @RequestParam(value = "type", required = false) String type,
                                  @RequestParam(value = "introduction", required = false) String introduction,
-                                 @RequestParam(value = "pageNum",  defaultValue = "1") int pageNum,
-                                 @RequestParam(value = "pageSize",  defaultValue = "20") int pageSize) {
+                                 @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+                                 @RequestParam(value = "pageSize", defaultValue = "20") int pageSize) {
         Pageable pageable = new Pageable() {
             @Override
             public int getPageNumber() {
-                return pageNum-1;
+                return pageNum - 1;
             }
 
             @Override
@@ -140,5 +141,31 @@ public class PeriodicalController {
     @GetMapping(value = "/api/periodical/agg/dateHistogram")
     public List<CommonVo> dateHistogramAgg(String interval) {
         return periodicalRepo.dateHistogramAgg(interval);
+    }
+
+    @GetMapping(value = "/api/periodical/delete")
+    public void delete(@RequestParam(value = "id", required = true) Long id) {
+        periodicalRepo.deleteById(id);
+    }
+
+    @GetMapping(value = "/api/periodical/save")
+    public void save(@RequestParam(value = "id", required = false) Long id,
+                     @RequestParam(value = "title", required = false) String title,
+                     @RequestParam(value = "author", required = false) String author,
+                     @RequestParam(value = "publish", required = false) String publish,
+                     @RequestParam(value = "type", required = false) String type,
+                     @RequestParam(value = "introduction", required = false) String introduction) {
+        Periodical periodical = new Periodical();
+        if (id == null)
+            periodical.setId(periodicalRepo.count() + 1);
+        else
+            periodical.setId(id);
+        periodical.setTitle(title);
+        periodical.setAuthor(author);
+        periodical.setPublisher(publish);
+        periodical.setType(type);
+        periodical.setIntroduction(introduction);
+
+        periodicalRepo.save(periodical);
     }
 }

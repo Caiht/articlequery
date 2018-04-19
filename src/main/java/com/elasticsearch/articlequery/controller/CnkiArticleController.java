@@ -1,5 +1,6 @@
 package com.elasticsearch.articlequery.controller;
 
+import com.elasticsearch.articlequery.models.CnkiArticle;
 import com.elasticsearch.articlequery.models.vos.CommonVo;
 import com.elasticsearch.articlequery.models.vos.DataVO;
 import com.elasticsearch.articlequery.repo.cnkiArticle.CnkiArticleRepo;
@@ -26,10 +27,10 @@ public class CnkiArticleController {
                                    @RequestParam(value = "ltDate", required = false) String ltDate,
                                    @RequestParam(value = "pageNum", required = true, defaultValue = "1") int pageNum,
                                    @RequestParam(value = "pageSize", required = true, defaultValue = "20") int pageSize) {
-        Pageable pageable =new Pageable() {
+        Pageable pageable = new Pageable() {
             @Override
             public int getPageNumber() {
-                return pageNum-1;
+                return pageNum - 1;
             }
 
             @Override
@@ -82,10 +83,10 @@ public class CnkiArticleController {
                                  @RequestParam(value = "ltDate", required = false) String ltDate,
                                  @RequestParam(value = "pageNum", required = true, defaultValue = "1") int pageNum,
                                  @RequestParam(value = "pageSize", required = true, defaultValue = "20") int pageSize) {
-        Pageable pageable =new Pageable() {
+        Pageable pageable = new Pageable() {
             @Override
             public int getPageNumber() {
-                return pageNum-1;
+                return pageNum - 1;
             }
 
             @Override
@@ -144,5 +145,33 @@ public class CnkiArticleController {
     public List<CommonVo> dateHistogramAgg(String interval) {
         return cnkiArticleRepo.dateHistogramAgg(interval);
 
+    }
+
+    @GetMapping(value = "/api/article/cnki/delete")
+    public void delete(@RequestParam(value = "id", required = true) Long id) {
+        cnkiArticleRepo.deleteById(id);
+    }
+
+    @GetMapping(value = "/api/article/cnki/save")
+    public void save(@RequestParam(value = "id", required = false) Long id,
+                     @RequestParam(value = "title", required = false) String title,
+                     @RequestParam(value = "author", required = false) String author,
+                     @RequestParam(value = "teacher", required = false) String teacher,
+                     @RequestParam(value = "university", required = false) String university,
+                     @RequestParam(value = "type", required = false) String type,
+                     @RequestParam(value = "introduction", required = false) String introduction) {
+        CnkiArticle cnkiArticle = new CnkiArticle();
+        if (id == null)
+            cnkiArticle.setId(cnkiArticleRepo.count() + 1);
+        else
+            cnkiArticle.setId(id);
+        cnkiArticle.setTitle(title);
+        cnkiArticle.setAuthor(author);
+        cnkiArticle.setTeacher(teacher);
+        cnkiArticle.setUniversity(university);
+        cnkiArticle.setType(type);
+        cnkiArticle.setIntroduction(introduction);
+
+        cnkiArticleRepo.save(cnkiArticle);
     }
 }

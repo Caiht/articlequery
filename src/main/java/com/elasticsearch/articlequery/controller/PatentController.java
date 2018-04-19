@@ -1,6 +1,7 @@
 package com.elasticsearch.articlequery.controller;
 
 
+import com.elasticsearch.articlequery.models.Patent;
 import com.elasticsearch.articlequery.models.vos.CommonVo;
 import com.elasticsearch.articlequery.models.vos.DataVO;
 import com.elasticsearch.articlequery.repo.patent.PatentRepo;
@@ -29,7 +30,7 @@ public class PatentController {
         Pageable pageable = new Pageable() {
             @Override
             public int getPageNumber() {
-                return pageNum-1;
+                return pageNum - 1;
             }
 
             @Override
@@ -85,7 +86,7 @@ public class PatentController {
         Pageable pageable = new Pageable() {
             @Override
             public int getPageNumber() {
-                return pageNum-1;
+                return pageNum - 1;
             }
 
             @Override
@@ -140,5 +141,34 @@ public class PatentController {
         return patentRepo.dateHistogramAgg(dateType, interval);
     }
 
+    @GetMapping(value = "/api/patent/delete")
+    public void delete(@RequestParam(value = "id", required = true) Long id) {
+        patentRepo.deleteById(id);
+    }
+
+    @GetMapping(value = "/api/patent/save")
+    public void save(@RequestParam(value = "id", required = false) Long id,
+                     @RequestParam(value = "title", required = false) String title,
+                     @RequestParam(value = "requestNumber", required = false) String requestNumber,
+                     @RequestParam(value = "publicationNumber", required = false) String publicationNumber,
+                     @RequestParam(value = "proposer", required = false) String proposer,
+                     @RequestParam(value = "inventor", required = false) String inventor,
+                     @RequestParam(value = "introduction", required = false) String introduction,
+                     @RequestParam(value = "type", required = false) String type) {
+        Patent patent = new Patent();
+        if (id == null)
+            patent.setId(patentRepo.count() + 1);
+        else
+            patent.setId(id);
+        patent.setTitle(title);
+        patent.setRequestNumber(requestNumber);
+        patent.setPublicationNumber(publicationNumber);
+        patent.setProposer(proposer);
+        patent.setInventor(inventor);
+        patent.setType(type);
+        patent.setIntroduction(introduction);
+
+        patentRepo.save(patent);
+    }
 
 }

@@ -1,6 +1,7 @@
 package com.elasticsearch.articlequery.controller;
 
 
+import com.elasticsearch.articlequery.models.Book;
 import com.elasticsearch.articlequery.models.vos.BookVO;
 import com.elasticsearch.articlequery.models.vos.CommonVo;
 import com.elasticsearch.articlequery.models.vos.DataVO;
@@ -23,12 +24,12 @@ public class BookController {
 
     @GetMapping(value = "/api/book/search/all")
     public DataVO SearchByQueryStr(@RequestParam(value = "queryStr", required = false) String queryStr,
-                                   @RequestParam(value="pageNum", required=true, defaultValue="1")int pageNum,
-                                   @RequestParam(value="pageSize", required=true, defaultValue="20")int pageSize) {
-        Pageable pageable =new Pageable() {
+                                   @RequestParam(value = "pageNum", required = true, defaultValue = "1") int pageNum,
+                                   @RequestParam(value = "pageSize", required = true, defaultValue = "20") int pageSize) {
+        Pageable pageable = new Pageable() {
             @Override
             public int getPageNumber() {
-                return pageNum-1;
+                return pageNum - 1;
             }
 
             @Override
@@ -81,13 +82,13 @@ public class BookController {
                                  @RequestParam(value = "gtPrice", required = false) String gtPrice,
                                  @RequestParam(value = "ltPrice", required = false) String ltPrice,
                                  @RequestParam(value = "isbn", required = false) String isbn,
-                                 @RequestParam(value="pageNum", defaultValue="1")int pageNum,
-                                 @RequestParam(value="pageSize", defaultValue="20")int pageSize
-                                 ) {
-        Pageable pageable =new Pageable() {
+                                 @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+                                 @RequestParam(value = "pageSize", defaultValue = "20") int pageSize
+    ) {
+        Pageable pageable = new Pageable() {
             @Override
             public int getPageNumber() {
-                return pageNum-1;
+                return pageNum - 1;
             }
 
             @Override
@@ -136,9 +137,8 @@ public class BookController {
     }
 
 
-
     @GetMapping(value = "/api/book/agg/tag")
-    public List<BookVO> tagAgg( @RequestParam(value = "tag", required = false) String tag) {
+    public List<BookVO> tagAgg(@RequestParam(value = "tag", required = false) String tag) {
         return bookRepo.tagAgg(tag);
     }
 
@@ -146,6 +146,37 @@ public class BookController {
     @GetMapping(value = "/api/book/agg/dateHistogram")
     public List<CommonVo> dateHistogramAgg(String interval) {
         return bookRepo.dateHistogramAgg(interval);
+    }
+
+    @GetMapping(value = "/api/book/delete")
+    public void delete(@RequestParam(value = "id", required = true) Long id) {
+        bookRepo.deleteById(id);
+    }
+
+    @GetMapping(value = "/api/book/save")
+    public void save(@RequestParam(value = "id", required = false) Long id,
+                     @RequestParam(value = "title", required = false) String title,
+                     @RequestParam(value = "author", required = false) String author,
+                     @RequestParam(value = "publish", required = false) String publish,
+                     @RequestParam(value = "score", required = false) Double score,
+                     @RequestParam(value = "tag", required = false) String tag,
+                     @RequestParam(value = "introduction", required = false) String introduction,
+                     @RequestParam(value = "price", required = false) Double price,
+                     @RequestParam(value = "isbn", required = false) String isbn) {
+        Book book = new Book();
+        if (id == null)
+            book.setId(bookRepo.count() + 1);
+        else
+            book.setId(id);
+        book.setTitle(title);
+        book.setAuthor(author);
+        book.setPublish(publish);
+        book.setScore(score);
+        book.setTag(tag);
+        book.setIntroduction(introduction);
+        book.setPrice(price);
+        book.setIsbn(isbn);
+        bookRepo.save(book);
     }
 
 }
