@@ -158,21 +158,29 @@ public class PeriodicalController {
                      @RequestParam(value = "publish", required = false) String publish,
                      @RequestParam(value = "type", required = false) String type,
                      @RequestParam(value = "date", required = false) String date,
-                     @RequestParam(value = "introduction", required = false) String introduction) throws ParseException {
+                     @RequestParam(value = "introduction", required = false) String introduction) {
         Periodical periodical = new Periodical();
         if (id == null)
             periodical.setId(periodicalRepo.count() + 1);
         else
             periodical.setId(id);
-        periodical.setTitle(title);
-        periodical.setAuthor(author);
-        periodical.setPublisher(publish);
-        periodical.setType(type);
+        if (title != null && !"undefined".equals(title))
+            periodical.setTitle(title);
+        if (author != null && !"undefined".equals(author))
+            periodical.setAuthor(author);
+        if (publish != null && !"undefined".equals(publish))
+            periodical.setPublisher(publish);
+        if (type != null && !"undefined".equals(type))
+            periodical.setType(type);
+        if (introduction != null && !"undefined".equals(introduction))
+            periodical.setIntroduction(introduction);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Pattern pattern =Pattern.compile("([0-9]{3}[1-9]|[0-9]{2}[1-9][0-9]{1}|[0-9]{1}[1-9][0-9]{2}|[1-9][0-9]{3})-(((0[13578]|1[02])-(0[1-9]|[12][0-9]|3[01]))|((0[469]|11)-(0[1-9]|[12][0-9]|30))|(02-(0[1-9]|[1][0-9]|2[0-8])))");
-        periodical.setIntroduction(introduction);
-        if (date!=null&&pattern.matcher(date).matches()){
-            periodical.setDate(sdf.parse(date));
+        if (date != null && !"undefined".equals(date)) {
+            try {
+                periodical.setDate(sdf.parse(date));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
         periodicalRepo.save(periodical);
     }

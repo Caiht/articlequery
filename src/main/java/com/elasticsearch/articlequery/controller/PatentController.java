@@ -159,27 +159,42 @@ public class PatentController {
                      @RequestParam(value = "proposer", required = false) String proposer,
                      @RequestParam(value = "inventor", required = false) String inventor,
                      @RequestParam(value = "introduction", required = false) String introduction,
-                     @RequestParam(value = "type", required = false) String type) throws ParseException {
+                     @RequestParam(value = "type", required = false) String type) {
         Patent patent = new Patent();
         if (id == null)
             patent.setId(patentRepo.count() + 1);
         else
             patent.setId(id);
-        patent.setTitle(title);
+        if (title != null && !"undefined".equals(title))
+            patent.setTitle(title);
+        if (requestNumber != null && !"undefined".equals(requestNumber))
+            patent.setRequestNumber(requestNumber);
+
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Pattern pattern =Pattern.compile("([0-9]{3}[1-9]|[0-9]{2}[1-9][0-9]{1}|[0-9]{1}[1-9][0-9]{2}|[1-9][0-9]{3})-(((0[13578]|1[02])-(0[1-9]|[12][0-9]|3[01]))|((0[469]|11)-(0[1-9]|[12][0-9]|30))|(02-(0[1-9]|[1][0-9]|2[0-8])))");
-        patent.setRequestNumber(requestNumber);
-        if (requestDate!=null&&pattern.matcher(requestDate).matches()){
-            patent.setRequestDate(sdf.parse(requestDate));
+        if (requestDate != null && !"undefined".equals(requestDate)) {
+            try {
+                patent.setRequestDate(sdf.parse(requestDate));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
-        patent.setPublicationNumber(publicationNumber);
-        if (publicationDate!=null&&pattern.matcher(publicationDate).matches()){
-            patent.setPublicationDate(sdf.parse(publicationDate));
+        if (publicationNumber != null && !"undefined".equals(publicationNumber))
+            patent.setPublicationNumber(publicationNumber);
+        if (null != publicationDate && !"undefined".equals(publicationDate)) {
+            try {
+                patent.setPublicationDate(sdf.parse(publicationDate));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
-        patent.setProposer(proposer);
-        patent.setInventor(inventor);
-        patent.setType(type);
-        patent.setIntroduction(introduction);
+        if (proposer != null && !"undefined".equals(proposer))
+            patent.setProposer(proposer);
+        if (inventor != null && !"undefined".equals(inventor))
+            patent.setInventor(inventor);
+        if (type != null && !"undefined".equals(type))
+            patent.setType(type);
+        if (introduction != null && !"undefined".equals(introduction))
+            patent.setIntroduction(introduction);
 
         patentRepo.save(patent);
     }

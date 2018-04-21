@@ -162,25 +162,34 @@ public class CnkiArticleController {
                      @RequestParam(value = "author", required = false) String author,
                      @RequestParam(value = "teacher", required = false) String teacher,
                      @RequestParam(value = "university", required = false) String university,
-                     @RequestParam(value = "date" ,required = false) String date,
+                     @RequestParam(value = "date", required = false) String date,
                      @RequestParam(value = "type", required = false) String type,
-                     @RequestParam(value = "introduction", required = false) String introduction) throws ParseException {
+                     @RequestParam(value = "introduction", required = false) String introduction) {
         CnkiArticle cnkiArticle = new CnkiArticle();
         if (id == null)
             cnkiArticle.setId(cnkiArticleRepo.count() + 1);
         else
             cnkiArticle.setId(id);
-        cnkiArticle.setTitle(title);
-        cnkiArticle.setAuthor(author);
-        cnkiArticle.setTeacher(teacher);
-        cnkiArticle.setUniversity(university);
+        if (title != null && !"undefined".equals(title))
+            cnkiArticle.setTitle(title);
+        if (author != null && !"undefined".equals(author))
+            cnkiArticle.setAuthor(author);
+        if (teacher != null && !"undefined".equals(teacher))
+            cnkiArticle.setTeacher(teacher);
+        if (university != null && !"undefined".equals(university))
+            cnkiArticle.setUniversity(university);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Pattern pattern =Pattern.compile("([0-9]{3}[1-9]|[0-9]{2}[1-9][0-9]{1}|[0-9]{1}[1-9][0-9]{2}|[1-9][0-9]{3})-(((0[13578]|1[02])-(0[1-9]|[12][0-9]|3[01]))|((0[469]|11)-(0[1-9]|[12][0-9]|30))|(02-(0[1-9]|[1][0-9]|2[0-8])))");
-        if (date!=null&&pattern.matcher(date).matches()){
-            cnkiArticle.setDate(sdf.parse(date));
+        if (date != null && !"undefined".equals(date)) {
+            try {
+                cnkiArticle.setDate(sdf.parse(date));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
-        cnkiArticle.setType(type);
-        cnkiArticle.setIntroduction(introduction);
+        if (type != null && !"undefined".equals(type))
+            cnkiArticle.setType(type);
+        if (introduction != null && !"undefined".equals(introduction))
+            cnkiArticle.setIntroduction(introduction);
 
         cnkiArticleRepo.save(cnkiArticle);
     }
