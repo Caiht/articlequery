@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,8 +19,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @RestController
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -206,4 +205,36 @@ public class BookController {
         bookRepo.save(book);
     }
 
+    @PostMapping(value = "/api/book/save/title")
+    public Boolean savetitle(
+            @RequestParam(value = "title", required = false) String title,
+            @RequestParam(value = "author", required = false) String author) {
+        Book book = new Book();
+        book.setId(bookRepo.count() + 1);
+        if (title != null && !"undefined".equals(title))
+            book.setTitle(title);
+        if (author != null && !"undefined".equals(author))
+            book.setAuthor(author);
+        bookRepo.save(book);
+        return true;
+    }
+
+    @PostMapping(value = "/api/book/save/title2")
+    public Boolean savebbb(
+            @RequestParam(value = "book", required = false) Book book) {
+        bookRepo.save(book);
+        return true;
+    }
+
+    @PostMapping(value = "/api/book/test")
+    public Boolean test(@RequestParam(value = "corpId", required = false) String corpId,
+                        @RequestParam(value = "agentId", required = false) String agentId,
+                        @RequestParam(value = "payload", required = false) String payload,
+                        @RequestParam(value = "users", required = false) String[] users) {
+        if (users != null && users.length > 0) {
+            System.out.println(users[0]);
+        }
+        System.out.println(corpId + agentId + payload);
+        return true;
+    }
 }
